@@ -1,3 +1,0 @@
-/mnt/c/Users/dmpechyo/Documents/private_docs/Udacity/path-planning/build/CMakeFiles/edit_cache.dir
-/mnt/c/Users/dmpechyo/Documents/private_docs/Udacity/path-planning/build/CMakeFiles/rebuild_cache.dir
-/mnt/c/Users/dmpechyo/Documents/private_docs/Udacity/path-planning/build/CMakeFiles/path_planning.dir
