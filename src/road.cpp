@@ -52,6 +52,14 @@ int Road::getLane(float d)
 }
 
 /**
+ * getLaneWidth Return width of the lane
+ */
+float Road::getLaneWidth()
+{
+    return lane_width;
+}
+
+/**
  * getCenter Find d coordinate of a given lane
  * @param lane Lane number
  */

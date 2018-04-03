@@ -21,8 +21,10 @@ class FSM {
     /**
      * Constructor
      * @param n_lanes Number of lanes in the road
+     * @param max_turn_counter Minimal number of "KEEP LANE" states between two changes of lanes
+     * @param max_init Number of initial iterations before any lane change is permitted
      */ 
-    FSM(int n_lanes);
+    FSM(int n_lanes, int max_turn_counter, int max_init);
 
     /**
      * successor_states Get all possible successor states of the given state
@@ -39,6 +41,9 @@ class FSM {
   private:
     PossibleStates curr_state;  // current state
     int n_lanes;                // number of lanes in the road
+    int turn_counter;           // number of state updates until change of lane is permitted
+    int max_turn_counter;       // minimal number of "KEEP LANE" states between two changes of lanes
+    int init_counter;           // number of iterations until any lane change is permitted               
 };
 
 // class that represents behavioral planner
@@ -54,8 +59,11 @@ class BehavioralPlanner {
      * @param max_vel Maximal velocity of the car
      * @param safety_buffer Minimal safety distance to the closest car in the same lane  
      * @param max_s Maximal value of coordinate s in the road
+     * @param max_turn_counter Minimal number of "KEEP LANE" states between two changes of lanes
+     * @param max_init Number of initial iterations before any lane change is permitted
      */ 
-    BehavioralPlanner(Road& road, int n_lanes, int init_lane, float init_vel, float max_vel, float safety_buffer, float max_s);
+    BehavioralPlanner(Road& road, int n_lanes, int init_lane, float init_vel, float max_vel, float safety_buffer, 
+                      float max_s, int max_turn_counter, int max_init);
 
     /**
      * update_trajectory Add new points to the planned trajectory of the car
@@ -73,8 +81,8 @@ class BehavioralPlanner {
     float ref_vel;              // current velocity
     float max_vel;              // maximal allowable velocity
     float safety_buffer;        // minimal safety distance to the closest car in the same lane
-    float max_s;                
-    Road& road;                 // road where the car drives
+    float max_s;                // maximal value of s coodinate
+    Road& road;                 // road where the car drives       
 
     /**
      * candidate_trajectory Generate new candidate trajectory when the car switches to the given new state

@@ -45,9 +45,11 @@ int main() {
 	const string map_file = "../data/highway_map.csv";  // waypoint map to read from
   const float max_s = 6945.554;  // the max s value before wrapping around the track back to 0
   const float max_vel = 49.2; // maximal speed (in mph). We set is slightly less than the maximal road speed (50 mph).
-  const float safety_buffer = 40; // driving straight - maximal distance to the car in front of us when we need to slow down
+  const float safety_buffer = 30; // driving straight - maximal distance to the car in front of us when we need to slow down
                                   // changing lanes - in the target lane, distance in front/behind the ego car that should be 
                                   //                  free from other cars
+  const int max_turn_counter = 200; // minimal number of "KEEP LANE" states between two changes of lanes
+  const int max_init = 200; // number of initial iterations before any lane change is permitted
    
   // start in lane 1
   int lane = 1;
@@ -56,7 +58,8 @@ int main() {
 	float ref_vel = 0;  // mph
 
 	Road road(n_lanes, lane_width, map_file, max_vel);                                        // object that represents the road
-  BehavioralPlanner planner(road, n_lanes, lane, ref_vel, max_vel, safety_buffer, max_s);   // behavioral planner
+  BehavioralPlanner planner(road, n_lanes, lane, ref_vel, max_vel, 
+                            safety_buffer, max_s, max_turn_counter, max_init);   // behavioral planner
   Car ego_car(road);                                                                        // object that represents ego car
 
   h.onMessage([&road,&planner,&lane,&ref_vel,&ego_car](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {

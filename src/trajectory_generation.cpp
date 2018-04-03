@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <math.h>
 #include "trajectory_generation.h"
@@ -15,8 +16,10 @@ using namespace std;
  * @param previous_path Previously generated trajectory that was not used by simulator
  * @param target_lane Lane where to extend the trajectory
  * @param target_velocity Desired velocity at the end of the new trajectory
+ * @param end_prev_trajectory Frenet coordinates of the last point of previously unused trajectory 
  */
-Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, int target_lane, float target_velocity) 
+Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, int target_lane, float target_velocity,
+                             FrenetState& end_prev_trajectory) 
 {
     // The code in this function was taken from Q&A video
 
@@ -32,19 +35,25 @@ Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, in
 	float ref_x = state.x;
 	float ref_y = state.y;
 	float car_yaw = atan2(state.vy, state.vx);
-	float ref_yaw = deg2rad(car_yaw);
+	float ref_yaw; 
+    
+	FrenetState last_point;  // Frenet coordinates of the last known point of trajectory
 
 	// if previous size is almost empty, use the car as starting reference
     int prev_size = previous_path.x.size();
 	if (prev_size < 2) {
-        float prev_car_x = state.x - cos(car_yaw);
-		float prev_car_y = state.y - sin(car_yaw);
-
-		ptsx.push_back(prev_car_x);
+		if (car.getSpeed() > 0) {
+            float prev_car_x = state.x - state.vx/50.0; 
+		    float prev_car_y = state.y - state.vy/50.0; 
+			ptsx.push_back(prev_car_x);
+			ptsy.push_back(prev_car_y);
+		}
+		
 		ptsx.push_back(state.x);
-
-		ptsy.push_back(prev_car_y);
 		ptsy.push_back(state.y);
+
+        ref_yaw = car_yaw;
+		last_point = state.f;
 	}
 	// use the previous path's end point as starting reference
     else {
@@ -60,12 +69,15 @@ Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, in
 
 		ptsy.push_back(ref_y_prev);
 		ptsy.push_back(ref_y);
+
+		last_point = end_prev_trajectory;
 	}
 
     // In Frenet add evenly 50m spaced points ahead of the starting reference
-	vector<float> next_wp0 = road.getXY(state.f.s+50, 2+4*target_lane);
-	vector<float> next_wp1 = road.getXY(state.f.s+100, 2+4*target_lane);
-	vector<float> next_wp2 = road.getXY(state.f.s+150, 2+4*target_lane);
+	float lane_width = road.getLaneWidth();
+	vector<float> next_wp0 = road.getXY(last_point.s+30, lane_width/2+lane_width*target_lane);   
+	vector<float> next_wp1 = road.getXY(last_point.s+60, lane_width/2+lane_width*target_lane);
+	vector<float> next_wp2 = road.getXY(last_point.s+90, lane_width/2+lane_width*target_lane);
 
     ptsx.push_back(next_wp0[0]);
 	ptsx.push_back(next_wp1[0]);
@@ -107,7 +119,7 @@ Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, in
 	float x_add_on = 0;
 
 	// Fill up the rest of our path planner after filling it with previous points, here we will always output 50 points
-    for (int i=1; i <= 50 - prev_size; i++) {
+    for (int i=1; i <= 20 - prev_size; i++) {
 	    float N = (target_dist / (0.02*target_velocity/2.24));  // 2.24 - convert from mph to m/s
 		float x_point = x_add_on + target_x / N;
 		float y_point = s(x_point);

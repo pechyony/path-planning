@@ -30,6 +30,11 @@ class Road {
     int getLane(float d);
 
     /**
+     * getLaneWidth Return width of the lane
+     */
+    float getLaneWidth();
+
+    /**
      * getCenter Find d coordinate of a given lane
      * @param lane Lane number
      */
