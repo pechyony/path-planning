@@ -6,8 +6,6 @@
 #include <thread>
 #include <vector>
 #include <tuple>
-//#include "Eigen-3.3/Eigen/Core"
-//#include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
 #include "spline.h"
 #include "helper.h"
