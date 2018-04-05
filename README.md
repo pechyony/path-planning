@@ -21,3 +21,4 @@ Follow instructions [here](https://github.com/udacity/CarND-Path-Planning-Projec
 * src - folder of the source files
 * path_planning.mp4 - video of the car driving 5 miles using our implementation of path planning
 * writeup.md - description of implementation of path planning
+* images - folder of images used in writeup.md

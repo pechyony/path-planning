@@ -20,9 +20,10 @@ struct Trajectory {
  * @param target_lane Lane where to extend the trajectory
  * @param target_velocity Desired velocity at the end of the new trajectory
  * @param end_prev_trajectory Frenet coordinates of the last point of previously unused trajectory 
+ * @param path_length length of generated trajectory 
  */
 Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, int target_lane, float target_velocity,
-                             FrenetState& end_prev_trajectory);
+                             FrenetState& end_prev_trajectory, int path_length);
 
 #endif
 

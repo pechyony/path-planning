@@ -17,9 +17,10 @@ using namespace std;
  * @param target_lane Lane where to extend the trajectory
  * @param target_velocity Desired velocity at the end of the new trajectory
  * @param end_prev_trajectory Frenet coordinates of the last point of previously unused trajectory 
+ * @param path_length length of generated trajectory 
  */
 Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, int target_lane, float target_velocity,
-                             FrenetState& end_prev_trajectory) 
+                             FrenetState& end_prev_trajectory, int path_length) 
 {
     // The code in this function was taken from Q&A video
 
@@ -48,7 +49,9 @@ Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, in
 			ptsx.push_back(prev_car_x);
 			ptsy.push_back(prev_car_y);
 		}
-		
+		else
+		    car_yaw = pi() / 2;
+
 		ptsx.push_back(state.x);
 		ptsy.push_back(state.y);
 
@@ -119,7 +122,7 @@ Trajectory spline_trajectory(Road& road, Car& car, Trajectory& previous_path, in
 	float x_add_on = 0;
 
 	// Fill up the rest of our path planner after filling it with previous points, here we will always output 50 points
-    for (int i=1; i <= 20 - prev_size; i++) {
+    for (int i=1; i <= path_length - prev_size; i++) {
 	    float N = (target_dist / (0.02*target_velocity/2.24));  // 2.24 - convert from mph to m/s
 		float x_point = x_add_on + target_x / N;
 		float y_point = s(x_point);

@@ -61,9 +61,10 @@ class BehavioralPlanner {
      * @param max_s Maximal value of coordinate s in the road
      * @param max_turn_counter Minimal number of "KEEP LANE" states between two changes of lanes
      * @param max_init Number of initial iterations before any lane change is permitted
+     * @param path_length Length of the generated trajectory
      */ 
     BehavioralPlanner(Road& road, int n_lanes, int init_lane, float init_vel, float max_vel, float safety_buffer, 
-                      float max_s, int max_turn_counter, int max_init);
+                      float max_s, int max_turn_counter, int max_init, int path_length);
 
     /**
      * update_trajectory Add new points to the planned trajectory of the car
@@ -82,6 +83,7 @@ class BehavioralPlanner {
     float max_vel;              // maximal allowable velocity
     float safety_buffer;        // minimal safety distance to the closest car in the same lane
     float max_s;                // maximal value of s coodinate
+    int path_length;            // length of the generated trajectory
     Road& road;                 // road where the car drives       
 
     /**

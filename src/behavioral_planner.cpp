@@ -71,11 +71,12 @@ void FSM::set_state(PossibleStates next_state)
  * @param max_s Maximal value of coordinate s in the road
  * @param max_turn_counter Minimal number of "KEEP LANE" states between two changes of lanes
  * @param max_init Number of initial iterations before any lane change is permitted
+ * @param path_length length of the generated trajectory
  */
 BehavioralPlanner::BehavioralPlanner(Road& road_, int n_lanes, int init_lane, float init_vel_, float max_vel_, 
-                                     float safety_buffer_, float max_s_, int max_turn_counter, int max_init) : 
+                                     float safety_buffer_, float max_s_, int max_turn_counter, int max_init, int path_length_) : 
     road(road_), fsm(n_lanes, max_turn_counter, max_init), target_lane(init_lane), ref_vel(init_vel_), max_vel(max_vel_), 
-    safety_buffer(safety_buffer_), max_s(max_s_)
+    safety_buffer(safety_buffer_), max_s(max_s_), path_length(path_length_)
 {}
 
 /**
@@ -187,35 +188,18 @@ tuple<Trajectory,float,float> BehavioralPlanner::straight_trajectory(vector<tupl
     // check if there are cars ahead of us
     float new_ref_vel = ref_vel;
 
-    /*
-    State car_state = car.getState();
-    float prev_trajectory_length = end_prev_trajectory.s - car_state.f.s;
-    if (prev_trajectory_length < 0)
-        prev_trajectory_length = end_prev_trajectory.s + max_s - car_state.f.s;
-    */
-
-    // check if there is unexpected car in front of us
-    /*
-    if (other_car(predictions, car_state.f, 0, prev_trajectory_length, target_lane)==true) {
-        // if yes then we need to reset trajectory and apply emergency brake
-        new_ref_vel -= 0.224;
-        prev_trajectory = Trajectory();
-        cout << "Emergency brake" << endl;
-    }
-    else {
-    */
-        if (other_car(predictions, end_prev_trajectory, 0, safety_buffer, target_lane) == true)
-		    new_ref_vel -= 0.224; // decrease of velocity by 0.224 mph is an acceleration of -5 m/s^2
-	    else if (ref_vel < max_vel - 0.224)
-            // no car ahead of us and we are driving slower than max velocity, hence we can increase the velocity
-		    new_ref_vel += 0.224;
-        else if (ref_vel > max_vel)
-            // we drove a bit faster than maximal speed (might happen because of the approximations when generating a trajectory)
-            new_ref_vel -= 0.224;  // decrease the velocity
-    //}
+    if (other_car(predictions, end_prev_trajectory, 0, safety_buffer, target_lane) == true)
+	    new_ref_vel -= 0.224; // decrease of velocity by 0.224 mph is an acceleration of -5 m/s^2
+	else if (ref_vel < max_vel - 0.224)
+        // no car ahead of us and we are driving slower than max velocity, hence we can increase the velocity
+	     new_ref_vel += 0.224;
+    else if (ref_vel > max_vel)
+        // we drove a bit faster than maximal speed (might happen because of the approximations when generating a trajectory)
+        new_ref_vel -= 0.224;  // decrease the velocity
+    
     // extend current trajectory
     Trajectory trajectory;
-    trajectory = spline_trajectory(road, car, prev_trajectory, target_lane, new_ref_vel, end_prev_trajectory);
+    trajectory = spline_trajectory(road, car, prev_trajectory, target_lane, new_ref_vel, end_prev_trajectory, path_length);
 
     return make_tuple(trajectory, new_ref_vel, new_ref_vel);
 }
@@ -257,7 +241,7 @@ tuple<Trajectory,float,float> BehavioralPlanner::turn_trajectory(vector<tuple<Fr
         new_ref_vel = max_vel;
 
     // extend existing trajectory by adding segments in the new lane    
-    trajectory = spline_trajectory(road, car, prev_trajectory, future_target_lane, new_ref_vel, end_prev_trajectory);
+    trajectory = spline_trajectory(road, car, prev_trajectory, future_target_lane, new_ref_vel, end_prev_trajectory, path_length);
 
     return make_tuple(trajectory, lane_average_speed, new_ref_vel);  
 }

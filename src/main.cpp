@@ -50,6 +50,7 @@ int main() {
                                   //                  free from other cars
   const int max_turn_counter = 200; // minimal number of "KEEP LANE" states between two changes of lanes
   const int max_init = 200; // number of initial iterations before any lane change is permitted
+  const int path_length = 20; // length of the generated trajectory 
    
   // start in lane 1
   int lane = 1;
@@ -59,7 +60,7 @@ int main() {
 
 	Road road(n_lanes, lane_width, map_file, max_vel);                                        // object that represents the road
   BehavioralPlanner planner(road, n_lanes, lane, ref_vel, max_vel, 
-                            safety_buffer, max_s, max_turn_counter, max_init);   // behavioral planner
+                            safety_buffer, max_s, max_turn_counter, max_init, path_length);   // behavioral planner
   Car ego_car(road);                                                                        // object that represents ego car
 
   h.onMessage([&road,&planner,&lane,&ref_vel,&ego_car](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
