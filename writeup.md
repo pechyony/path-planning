@@ -32,9 +32,8 @@ Notice that car's acceleration can be estimated only after receiving two observa
 
 Let t<sub>2</sub> be the time of the last observation of our car. Prediction module predicts locations of other cars at the time when our car reaches the end of the previously unused trajectory: 
 <center>
-t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.      
-</center>    
-
+t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.
+</center>
 Prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
 <center>
 x(t<sub>3</sub>)=x(t<sub>2</sub>)+v<sub>x</sub>(t<sub>2</sub>)dt+a<sub>x</sub>(t<sub>2</sub>)dt<sup>2</sup>/2    
