@@ -22,6 +22,7 @@ In the next sections we provide a detailed description of Prediction, Behavior P
 
 ## Prediction
 The goal of Prediction module is to generate an accurate prediction of the location of other cars in the road. Prediction module receives from Sensor Fusion the current location and speed of all observed cars. To generate an accurate prediction of other car's location, we estimated its acceleration by using its two successive observations. We used the following simple formula for estimating acceleration from two successive observations at times t<sub>1</sub> and t<sub>2</sub> (t<sub>1</sub><t<sub>2</sub>): 
+
 <center>
 a(t<sub>2</sub>) = (v(t<sub>2</sub>)-v(t<sub>1</sub>))/(t<sub>2</sub>-t<sub>1</sub>)
 </center>  
@@ -34,12 +35,15 @@ Let t<sub>2</sub> be the time of the last observation of our car. Prediction mod
 <center>
 t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.
 </center>
+
 Prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
+
 <center>
 x(t<sub>3</sub>)=x(t<sub>2</sub>)+v<sub>x</sub>(t<sub>2</sub>)dt+a<sub>x</sub>(t<sub>2</sub>)dt<sup>2</sup>/2    
 
 v<sub>x</sub>(t<sub>3</sub>)=v<sub>x</sub>(t<sub>2</sub>)+a<sub>x</sub>(t<sub>2</sub>)dt
 </center>
+
 where dt=t<sub>3</sub>-t<sub>2</sub>. Prediction of location and speed along y axis is done in a similar way. 
 
 Prediction module sends generated predictions to Behavor Planner module, which is described in the last section. 
