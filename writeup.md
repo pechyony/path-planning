@@ -21,21 +21,21 @@ Simulator calls the path planner to get a new trajectory for motion controller. 
 In the next sections we provide a detailed description of Prediction, Behavior Planner and Trajectory Generation modules. 
 
 ## Prediction
-The goal of Prediction module is to generate an accurate prediction of the location of other cars in the road. Prediction module receives from Sensor Fusion the current location and speed of all observed cars. To generate an accurate prediction of other car's location, we used its two successive observations to estimate its acceleration. We use the following simple formula for estimating acceleration from two successive observations at times t<sub>1</sub> and t<sub>2</sub> (t<sub>1</sub><t<sub>2</sub>): 
+The goal of Prediction module is to generate an accurate prediction of the location of other cars in the road. Prediction module receives from Sensor Fusion the current location and speed of all observed cars. To generate an accurate prediction of other car's location, we estimated its acceleration by using its two successive observations. We used the following simple formula for estimating acceleration from two successive observations at times t<sub>1</sub> and t<sub>2</sub> (t<sub>1</sub><t<sub>2</sub>): 
 <center>
 a(t<sub>2</sub>) = (v(t<sub>2</sub>)-v(t<sub>1</sub>))/(t<sub>2</sub>-t<sub>1</sub>)
 </center>  
-where v and a are velocity and acceleration. Since Sensor Fusion provides v<sup>x</sup> and v<sup>y</sup> velocities in both x and y axes, we also estimated acceleration a<sup>x</sup> and a<sup>y</sup> separately in each axis. 
 
-Notice that car's acceleration can be estimated only after receiving two observations. Hence we set car's accelration to zero when it is observed for the first time.
+where v and a are velocity and acceleration. Since Sensor Fusion provides v<sub>x</sub> and v<sub>y</sub> velocities in both x and y axes, we also estimated acceleration a<sub>x</sub> and a<sub>y</sub> separately in each axis. 
 
-Let t<sub>2</sub> be the time of the last observation of the car. Prediction module predicts location of other cars at the time when our car reaches the end of the previously unused trajectory: 
+Notice that car's acceleration can be estimated only after receiving two observations. Hence we set car's acceleration to zero when it is observed for the first time.
 
+Let t<sub>2</sub> be the time of the last observation of our car. Prediction module predicts locations of other cars at the time when our car reaches the end of the previously unused trajectory: 
 <center>
-t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.
-</center>
+t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.      
+</center>    
 
-The prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
+Prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
 <center>
 x(t<sub>3</sub>)=x(t<sub>2</sub>)+v<sub>x</sub>(t<sub>2</sub>)dt+a<sub>x</sub>(t<sub>2</sub>)dt<sup>2</sup>/2    
 
