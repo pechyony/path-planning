@@ -25,8 +25,9 @@ The goal of Prediction module is to generate an accurate prediction of the locat
 
 <center>
 a(t<sub>2</sub>) = (v(t<sub>2</sub>)-v(t<sub>1</sub>))/(t<sub>2</sub>-t<sub>1</sub>)
-</center>  
-
+</center>
+<br>
+<br>
 where v and a are velocity and acceleration. Since Sensor Fusion provides v<sub>x</sub> and v<sub>y</sub> velocities in both x and y axes, we also estimated acceleration a<sub>x</sub> and a<sub>y</sub> separately in each axis. 
 
 Notice that car's acceleration can be estimated only after receiving two observations. Hence we set car's acceleration to zero when it is observed for the first time.
@@ -35,11 +36,13 @@ Let t<sub>2</sub> be the time of the last observation of our car. Prediction mod
 <center>
 t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.     
     
-</center>  
+</center>
+<br>
 <br>
 Prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
-
-<center>
+<br>
+<br>
+<center>  
 x(t<sub>3</sub>)=x(t<sub>2</sub>)+v<sub>x</sub>(t<sub>2</sub>)dt+a<sub>x</sub>(t<sub>2</sub>)dt<sup>2</sup>/2    
 
 v<sub>x</sub>(t<sub>3</sub>)=v<sub>x</sub>(t<sub>2</sub>)+a<sub>x</sub>(t<sub>2</sub>)dt
