@@ -16,7 +16,7 @@ Prediction, Behavior Planner and Trajectory Generation. The connections between 
 
 ![alt text][image0]
 
-Simulator calls the path planner to get a new trajectory for motion controller. Path planner generates trajectory of the car and sends it back to simulator. The trajectory of the car consists of a set of waypoints. In our implementation we generated trajectories of 20 waypoints. Simulator has a motion controller that drives the car from one waypoint to the next one in 0.02 seconds. Apart from the inputs shown in the diagram, path planner receives also the part of the previously generates trajectory that was not used by simulator. This old trajectory is reused by the path planner when generating a new one.
+Simulator calls the path planner to get a new trajectory for motion controller. Path planner generates trajectory of the car and sends it back to simulator. The trajectory of the car consists of a set of waypoints. In our implementation we generated trajectories with 20 waypoints. Simulator has a motion controller that drives the car from one waypoint to the next one in 0.02 seconds. Apart from the inputs shown in the diagram, path planner receives also the part of the previously generated trajectory that was not used by simulator. This old trajectory is reused by the path planner when generating a new one.
 
 In the next sections we provide a detailed description of Prediction, Behavior Planner and Trajectory Generation modules. 
 
