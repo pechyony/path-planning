@@ -16,31 +16,38 @@ Prediction, Behavior Planner and Trajectory Generation. The connections between 
 
 ![alt text][image0]
 
-Simulator calls the path planner to get a new trajectory for motion controller. Path planner generates trajectory of the car and sends it back to simulator. The trajectory of the car consists of a set of waypoints. In our implementation we generated trajectories of 20 waypoints. Simulator has a motion controller that drives the car from one waypoint to the next one in 0.02 seconds. Apart from the inputs shown in the diagram, path planner receives also the part of the previously generates trajectory that was not used by simulator. This old trajectory is reused by the path planner when generating a new one.
+Simulator calls the path planner to get a new trajectory for motion controller. Path planner generates trajectory of the car and sends it back to simulator. The trajectory of the car consists of a set of waypoints. In our implementation we generated trajectories with 20 waypoints. Simulator has a motion controller that drives the car from one waypoint to the next one in 0.02 seconds. Apart from the inputs shown in the diagram, path planner receives also the part of the previously generated trajectory that was not used by simulator. This old trajectory is reused by the path planner when generating a new one.
 
 In the next sections we provide a detailed description of Prediction, Behavior Planner and Trajectory Generation modules. 
 
 ## Prediction
-The goal of Prediction module is to generate an accurate prediction of the location of other cars in the road. Prediction module receives from Sensor Fusion the current location and speed of all observed cars. To generate an accurate prediction of other car's location, we used its two successive observations to estimate its acceleration. We use the following simple formula for estimating acceleration from two successive observations at times t<sub>1</sub> and t<sub>2</sub> (t<sub>1</sub><t<sub>2</sub>): 
+The goal of Prediction module is to generate an accurate prediction of the location of other cars in the road. Prediction module receives from Sensor Fusion the current location and speed of all observed cars. To generate an accurate prediction of other car's location, we estimated its acceleration by using its two successive observations. We used the following simple formula for estimating acceleration from two successive observations at times t<sub>1</sub> and t<sub>2</sub> (t<sub>1</sub><t<sub>2</sub>): 
+
 <center>
 a(t<sub>2</sub>) = (v(t<sub>2</sub>)-v(t<sub>1</sub>))/(t<sub>2</sub>-t<sub>1</sub>)
-</center>  
-where v and a are velocity and acceleration. Since Sensor Fusion provides v<sup>x</sup> and v<sup>y</sup> velocities in both x and y axes, we also estimated acceleration a<sup>x</sup> and a<sup>y</sup> separately in each axis. 
-
-Notice that car's acceleration can be estimated only after receiving two observations. Hence we set car's accelration to zero when it is observed for the first time.
-
-Let t<sub>2</sub> be the time of the last observation of the car. Prediction module predicts location of other cars at the time when our car reaches the end of the previously unused trajectory: 
-
-<center>
-t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.
 </center>
+<br>
+<br>
+where v and a are velocity and acceleration. Since Sensor Fusion provides v<sub>x</sub> and v<sub>y</sub> velocities in both x and y axes, we also estimated acceleration a<sub>x</sub> and a<sub>y</sub> separately in each axis. 
 
-The prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
+Notice that car's acceleration can be estimated only after receiving two observations. Hence we set car's acceleration to zero when it is observed for the first time.
+
+Let t<sub>2</sub> be the time of the last observation of our car. Prediction module predicts locations of other cars at the time when our car reaches the end of the previously unused trajectory: 
 <center>
+t<sub>3</sub> = t<sub>2</sub> + 0.02 seconds * size of the previously unused trajectory.     
+    
+</center>
+<br>
+<br>
+Prediction of location and speed to time t<sub>3</sub> is performed using the constant acceleration model. Prediction equations for the x axis are:
+<br>
+<br>
+<center>  
 x(t<sub>3</sub>)=x(t<sub>2</sub>)+v<sub>x</sub>(t<sub>2</sub>)dt+a<sub>x</sub>(t<sub>2</sub>)dt<sup>2</sup>/2    
 
 v<sub>x</sub>(t<sub>3</sub>)=v<sub>x</sub>(t<sub>2</sub>)+a<sub>x</sub>(t<sub>2</sub>)dt
 </center>
+
 where dt=t<sub>3</sub>-t<sub>2</sub>. Prediction of location and speed along y axis is done in a similar way. 
 
 Prediction module sends generated predictions to Behavor Planner module, which is described in the last section. 
@@ -98,7 +105,7 @@ When there are several candidate states to choose from, we chose the one that ha
 
 * **Keep Lane**. In "keep lane" state the expected velocity is the one at the end of the new trajectory. Initially we use predicted locations of other observed cars and check if there will be other car within 30 meters after the end of the previously unused trajectory. If yes, then we generate a new candidate trajectory with the velocity at the last point being the current one decreased by 0.224 mph. If no, then we generate a new candidate trajectory with the velocity at the last point being the current one increased by 0.224 mph, up to a maximal velocity of 49.2 mph. 
 
-* **Change to the left/right lane**. In "change to the right lane" and "change to the left" state the expected velocity depends on the feasiblity of the turn to the new lane. If Prediction module predicts that there will be other car in the new lane within 30 meters after the end of the previously trajectory or within 60 meters before the end of the previously unused trajectory then the change of the lane is not feasible and we set the expected velocity to -1. Otherwise, the expected velocity in the new lane is the average speed of the other cars in the new lane the will drive within 1000 meters of the end of previously unused trajectory when our car reaches that point. If the expected velocity in the new lane is less than the current velocity of the car, even if it slows down a bit due to the car in front of it, then the change to a new lane will not be chosen by behavior planner and hence we don't need to generate a new trajectory. 
+* **Change to the left/right lane**. In "change to the right lane" and "change to the left" state the expected velocity depends on the feasiblity of the turn to the new lane. If Prediction module predicts that there will be other car in the new lane within 30 meters after the end of the previously trajectory or within 60 meters before the end of the previously unused trajectory then the change of the lane is not feasible and we set the expected velocity to -1. Otherwise, the expected velocity in the new lane is the average speed of the other cars in the new lane that will drive within 1000 meters of the end of previously unused trajectory when our car reaches that point. If the expected velocity in the new lane is less than the current velocity of the car, even if it slows down a bit due to the car in front of it, then the change to a new lane will not be chosen by behavior planner and hence we don't need to generate a new trajectory. 
 
     Finally, if it is feasible to change to a new lane and the expected velocity in the new lane is larger than the current velocity then we generate an new candidate trajectory that goes towards the center of the new lane. The target velocity at the last point of the new trajectory is the current velocity plus 0.224 mph, up to a maximal velocity of 49.2 mph.  
 
