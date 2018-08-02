@@ -1,7 +1,8 @@
 # Path Planning
 Project 1 of term 3 of Udacity self-driving car nanodegree
 
-[![simulator test test](images/test_screenshot.png)](https://www.youtube.com/watch?v=cCa9C0NvXY4) 
+[![simulator test test](images/test_screenshot.png)](https://www.youtube.com/watch?v=cCa9C0NvXY4)  
+
 Description of our implementation is available [here](writeup.md).
 
 ## Setup
