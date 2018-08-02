@@ -1,6 +1,9 @@
 # Path Planning
 Project 1 of term 3 of Udacity self-driving car nanodegree
 
+[![simulator test test](images/test_screenshot.png)](https://www.youtube.com/watch?v=cCa9C0NvXY4) 
+Description of our implementation is available [here](writeup.md).
+
 ## Setup
 
 This project involves the Term 3 Simulator which can be downloaded [here](https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
@@ -19,6 +22,5 @@ Follow instructions [here](https://github.com/udacity/CarND-Path-Planning-Projec
 ## Files
 
 * src - folder of the source files
-* path_planning.mp4 - video of the car driving 5 miles using our implementation of path planning
 * writeup.md - description of implementation of path planning
 * images - folder of images used in writeup.md
